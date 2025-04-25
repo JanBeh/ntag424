@@ -193,6 +193,7 @@ int main(int argc, char **argv) {
     )) {
       fprintf(stderr,
         "Changing file settings failed: %s\n", ntag424_strerror(ctx));
+      goto close;
     }
     if (!ntag424_WriteData(
       ctx, NTAG424_MODE_PLAIN, NTAG424_FILE_CAPABILITIES, 0,
@@ -200,6 +201,7 @@ int main(int argc, char **argv) {
     )) {
       fprintf(stderr,
         "Writing capabilities failed: %s\n", ntag424_strerror(ctx));
+      goto close;
     }
     fprintf(stderr, "File #2 protected.\n");
   }
