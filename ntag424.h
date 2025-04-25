@@ -230,7 +230,7 @@ void ntag424_edit_capabilities(
   uint8_t change_key
 );
 
-// Read file without MAC or encryption:
+// Read up to a given number of bytes from a file (without MAC or encryption):
 // (result available in ctx->rxbuf with a length of ctx->datalen bytes)
 bool ntag424_ISOReadBinary(
   ntag424_ctx_t *ctx,
