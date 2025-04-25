@@ -99,6 +99,22 @@ int main(int argc, char **argv) {
     goto close;
   }
   fprintf(stderr, "Application selected.\n");
+  {
+    fprintf(stderr, "Reading capability file with standard ISO command...\n");
+    // NOTE: Using NTAG424_READLEN_MAX seems to cause issues with too big
+    // frames, depending on the used interface. We read a maximum of 128 bytes,
+    // i.e. 0x80 bytes, instead.
+    if (!ntag424_ISOReadBinary(ctx, NTAG424_FILE_CAPABILITIES, 0, 0x80)) {
+      fprintf(stderr,
+        "Reading capabilities failed: %s\n", ntag424_strerror(ctx));
+      goto close;
+    }
+    for (int i=0; i<ctx->datalen; i++) {
+      fprintf(stdout, "%02hhX", ctx->rxbuf[i]);
+    }
+    fprintf(stdout, "\n");
+    fprintf(stderr, "Done.\n");
+  }
   fprintf(stderr, "Get key version...\n");
   {
     int version = ntag424_GetKeyVersion(ctx, 0);

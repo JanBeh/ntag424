@@ -603,6 +603,38 @@ void ntag424_edit_capabilities(
   }
 }
 
+bool ntag424_ISOReadBinary(
+  ntag424_ctx_t *ctx,
+  int file_number,
+  size_t offset,
+  size_t length
+) {
+  if (
+    file_number < 0x00 || file_number > 0x1C ||
+    offset > 0xFF || length > NTAG424_READLEN_MAX
+  ) {
+    ntag424_set_error(ctx, NTAG424_ERR_INV_ARG);
+    return NULL;
+  }
+  if (length == 0) {
+    ctx->datalen = 0;
+    return true;
+  }
+  uint8_t tx[5] = {
+    0x00, // class byte for standard ISO command
+    0xB0, // instruction byte for ISOReadBinary
+    // further data filled in below
+  };
+  tx[2] = 0x80 | (uint8_t)(file_number+2);
+  tx[3] = (uint8_t)offset;
+  if (length <= 0xFF) tx[4] = (uint8_t)length;
+  if (!ntag424_transceive(ctx, tx, sizeof(tx))) return false;
+  if (ctx->picc_status.sw1 != 0x90 || ctx->picc_status.sw2 != 0x00) {
+    return ntag424_set_error(ctx, NTAG424_ERR_BAD_STATUS);
+  }
+  return ntag424_set_error(ctx, 0);
+}
+
 uint8_t *ntag424_ReadData(
   ntag424_ctx_t *ctx,
   int mode,
@@ -612,7 +644,7 @@ uint8_t *ntag424_ReadData(
 ) {
   if (
     file_number < 0x00 || file_number > 0x1F ||
-    offset > 0xFFFFFF || length > 0xFFFFFF
+    offset > 0xFFFFFF || length > NTAG424_READLEN_MAX
   ) {
     ntag424_set_error(ctx, NTAG424_ERR_INV_ARG);
     return NULL;

@@ -15,8 +15,12 @@
 // Length of UID
 #define NTAG424_UID_LEN 7
 
+// Maximum read length of this library:
+// (Note that the used interface for transceiving may impose lower limits.)
+#define NTAG424_READLEN_MAX 256
+
 // Read buffer length:
-#define NTAG424_RXBUF_LEN (256+16+8+2)
+#define NTAG424_RXBUF_LEN (NTAG424_READLEN_MAX+16+8+2)
 
 // Error codes:
 #define NTAG424_ERR_NOT_IMPL -1
@@ -226,7 +230,16 @@ void ntag424_edit_capabilities(
   uint8_t change_key
 );
 
-// Read specified number of bytes from file:
+// Read file without MAC or encryption:
+// (result available in ctx->rxbuf with a length of ctx->datalen bytes)
+bool ntag424_ISOReadBinary(
+  ntag424_ctx_t *ctx,
+  int file_number,
+  size_t offset,
+  size_t length // less bytes may be read, specifying zero means read all
+);
+
+// Read exact number of bytes from file:
 // (no allocation, result valid until context is used again)
 uint8_t *ntag424_ReadData(
   ntag424_ctx_t *ctx,
