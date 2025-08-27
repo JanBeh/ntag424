@@ -242,16 +242,16 @@ int main(int argc, char **argv) {
   {
     fprintf(stderr, "Reading file #2 (with encryption)...\n");
     uint8_t *rx;
-    for (int chunk=0; chunk<2; chunk++) {
+    for (int i=0; i<2; i++) {
       const size_t chunk_len = 128;
-      rx = ntag424_ReadData(ctx, NTAG424_MODE_FULL, 2, 0, chunk_len);
+      rx = ntag424_ReadData(ctx, NTAG424_MODE_FULL, 2, i*chunk_len, chunk_len);
       if (!rx) {
         fprintf(stderr,
           "Reading file #2 (with encryption) failed: %s\n",
           ntag424_strerror(ctx));
         goto close;
       }
-      for (int i=0; i<chunk_len; i++) fprintf(stdout, "%02hhX", rx[i]);
+      for (int j=0; j<chunk_len; j++) fprintf(stdout, "%02hhX", rx[j]);
     }
     fprintf(stdout, "\n");
     fprintf(stderr, "Done.\n");
