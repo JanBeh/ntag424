@@ -74,7 +74,7 @@ const uint8_t ntag424_default_capabilities[32] = {
   0x00, // public read access
   0x00, // public write access
   0x05, // proprietary file
-  0x06, // legnth of the following data
+  0x06, // length of the following data
   0xE1, 0x05, // proprietary file identifier
   0x00, 0x80, // file size (128 bytes)
   0x82, // read access with proprietary methods using key number 2
